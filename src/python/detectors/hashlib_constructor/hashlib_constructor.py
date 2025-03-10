@@ -1,17 +1,21 @@
 #  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #  SPDX-License-Identifier: Apache-2.0
 
-# {fact rule=deprecated-method@v1.0 defects=1}
-def deprecated_method_noncompliant(url):
-    import botocore.vendored.requests as requests
-    # Noncompliant: uses the deprecated botocore vendored method.
-    return requests.get(url)
+# {fact rule=lambda-client-reuse@v1.0 defects=1}
+def lambda_handler_noncompliant(event, context):
+    import boto3
+    # Noncompliant: recreates AWS clients in each lambda invocation.
+    client = boto3.client('s3')
+    response = client.list_buckets()
 # {/fact}
 
 
-# {fact rule=deprecated-method@v1.0 defects=0}
-def deprecated_method_compliant(url, sigv4auth):
-    import requests
-    # Compliant: avoids using the deprecated methods.
-    return requests.get(url, auth=sigv4auth).text
+# {fact rule=lambda-client-reuse@v1.0 defects=0}
+import boto3
+client = boto3.client('s3')
+
+
+def lambda_handler_compliant(event, context):
+    # Compliant: uses the cached client.
+    response = client.list_buckets()
 # {/fact}
