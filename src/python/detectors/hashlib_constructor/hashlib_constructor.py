@@ -1,30 +1,17 @@
 #  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #  SPDX-License-Identifier: Apache-2.0
 
-# {fact rule=hashlib-constructor@v1.0 defects=1}
-def constructor_noncompliant():
-    import hashlib
-
-    text = "ExampleString"
-
-    # Noncompliant: uses the new() constructor instead of the hashlib
-    # constructor, which is slower.
-    result = hashlib.new('sha256', text.encode())
-
-    print("The hexadecimal equivalent of SHA256 is : ")
-    print(result.hexdigest())
+# {fact rule=deprecated-method@v1.0 defects=1}
+def deprecated_method_noncompliant(url):
+    import botocore.vendored.requests as requests
+    # Noncompliant: uses the deprecated botocore vendored method.
+    return requests.get(url)
 # {/fact}
 
 
-# {fact rule=hashlib-constructor@v1.0 defects=0}
-def constructor_compliant():
-    import hashlib
-
-    text = "ExampleString"
-
-    # Compliant: uses the hashlib constructor over the new(), which is faster.
-    result = hashlib.sha256(text.encode())
-
-    print("The hexadecimal equivalent of SHA256 is : ")
-    print(result.hexdigest())
+# {fact rule=deprecated-method@v1.0 defects=0}
+def deprecated_method_compliant(url, sigv4auth):
+    import requests
+    # Compliant: avoids using the deprecated methods.
+    return requests.get(url, auth=sigv4auth).text
 # {/fact}
